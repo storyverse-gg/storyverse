@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react"
-import { continueStory, startNewStory } from "../helper/story"
+import { continueStory, createImagePrompt, startNewStory } from "../helper/story"
 import { ChatMessage, Colors, StoryBaseline } from '../helper/types'
 
 const Gameplay = () => {
@@ -53,6 +53,32 @@ const Gameplay = () => {
     setLoading(false)
   }
 
+  const generateImage = async () => {
+
+    const userRequest = {
+      role: 'user',
+      content: `Imagine that you are speaking with an artist about a picture you want them to create for this story. You must include a subject (the main focus of the visual), what the subject is doing, where, and how, along with additional descriptive words to describe the rendering's visual style. And the description should be concise in a paragraph while capturing all the aesthetics and details about the surroundings you want to incorporate in the picture based on this story plot. You must consider all the actions that the user did in the story and important artifacts.  
+      ensure that you show the character in the image engaging with items or doing what exactly presented in the story.`
+    }
+
+    const msgs = [{
+      role: 'assistant',
+      content: baseline.summary,
+    }, ...conversation, userRequest]
+
+    setUserCommand('')
+    setLoading(true)
+
+    const response = await createImagePrompt(msgs)
+
+    console.log(response)
+    setConversation([...conversation, userRequest, {
+      role: 'assistant',
+      content: response ?? ''
+    }])
+    setLoading(false)
+  }
+
   return <div className="flex flex-col flex-1 w-2/3 py-12 h-full">
     <div className="relative rounded-lg bg-white bg-opacity-20 backdrop-blur-3xl border-white flex flex-col flex-1 mb-2 max-h-[80vh]">
       <div className="overflow-y-auto overflow-x-hidden mb-16">
@@ -70,7 +96,7 @@ const Gameplay = () => {
         </div>
         {conversation.map(i => {
           return (
-            <div className={"h-auto mx-4 rounded-lg p-4 " + (i.role == "user" ? "bg-accent" : "bg-white")}>
+            <div key={i.content.slice(0, 10)} className={"h-auto mx-4 rounded-lg p-4 " + (i.role == "user" ? "bg-accent" : "bg-white")}>
               <p className="text-justify text-lg">
                 {i.content.split("<br>").map((line, index) => (
                   <Fragment key={index}>
@@ -90,6 +116,9 @@ const Gameplay = () => {
           type="text" aria-multiline
           placeholder="What's your next move?"
           className="input w-full px-6 mr-2" />
+        {/* <button onClick={() => generateImage()} className={`btn btn-circle`}>
+          Save Image
+        </button> */}
         <button onClick={takeAction} className={`btn btn-circle`}>
           {
             loading ?
