@@ -4,7 +4,6 @@ import "../flow/config";
 
 import * as fcl from "@onflow/fcl";
 import { useEffect, useState } from "react";
-import { useLocalStorage } from "use-hooks";
 
 const AuthedState = ({ addr }: { addr: string | null }) => {
   return (
@@ -42,18 +41,6 @@ const Header = () => {
   const [user, setUser] = useState({ loggedIn: null, addr: null })
   useEffect(() => { fcl.currentUser.subscribe(setUser) }, [])
   //we store the theme in localStorage to preserve the state on next visit with an initial theme of dark.
-  const [theme, setTheme] = useLocalStorage("theme", "dark");
-
-  //toggles the theme
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "cupcake" : "dark");
-  };
-
-  //modify data-theme attribute on document.body when theme changes
-  useEffect(() => {
-    const body = document.body;
-    body.setAttribute("data-theme", theme);
-  }, [theme]);
 
   return <div className="navbar backdrop-blur-md flex flex-1 justify-center p-4 fixed top-0 z-50">
     <div className="flex-1">
