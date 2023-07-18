@@ -1,4 +1,7 @@
 {
+	"contracts": {
+		"Storyverse": "flow/contracts/Storyverse.cdc"
+	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -6,6 +9,20 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
+		"Story": {
+			"address": "19cbfc3c224b80c2",
+			"key": {
+				"type": "file",
+				"location": "Story.pkey"
+			}
+		},
+		"Storyverse": {
+			"address": "722f79f3ee87e7fe",
+			"key": {
+				"type": "file",
+				"location": "Storyverse.pkey"
+			}
+		},
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"key": {

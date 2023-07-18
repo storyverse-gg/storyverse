@@ -93,6 +93,6 @@ export const createImage = async (prompt: string) => {
     n: 1,
     size: "1024x1024",
   })
-
+  console.log(response.data.data[0])
   return response.data.data[0].url
 }

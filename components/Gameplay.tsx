@@ -2,8 +2,15 @@ import { Fragment, useEffect, useRef, useState } from "react"
 import { continueStory, createImage, createImagePrompt, startNewStory } from "../helper/story"
 import { ChatMessage, Colors } from '../helper/types'
 import useStoryStore from "../redux/store"
+
+import * as fcl from "@onflow/fcl";
 import { Midjourney } from "midjourney";
 import { imageUrlToBase64 } from "../helper/util";
+import { createNftTransaction } from "../flow/transactions/createNft";
+
+import lighthouse from '@lighthouse-web3/sdk'
+import axios from "axios";
+import { signer } from "./serverSigner";
 
 
 const Gameplay = () => {
@@ -12,6 +19,7 @@ const Gameplay = () => {
 
   const [conversation, setConversation] = useState<ChatMessage[]>([])
   const [base64Image, setBase64Image] = useState('')
+  const [imageIpfs, setImageIpfs] = useState('')
   const [colors, setColors] = useState<Colors>()
 
   const [userCommand, setUserCommand] = useState('')
@@ -73,8 +81,49 @@ const Gameplay = () => {
     }
   };
 
-  const mintNFT = () => {
+  const mintNFT = async () => {
+    const metadata = JSON.stringify({
+      title: baseline.title,
+      summary: baseline.summary,
+      conversation: conversation,
+      image: imageIpfs,
+    })
 
+    console.log('metadatasd', metadata)
+    const transactionId = await fcl.send([
+      fcl.transaction(createNftTransaction),
+      fcl.args([fcl.arg(metadata, fcl.t.String)]),
+      fcl.payer(signer),
+      fcl.proposer(signer),
+      fcl.authorizations([signer, fcl.authz]),
+      fcl.limit(9999)
+    ]).then(fcl.decode)
+
+    console.log('transaction', transactionId)
+  }
+
+  // function getImageData(url: string) {
+  //   return axios({
+  //     url,
+  //     responseType: 'arraybuffer'
+  //   })
+  //     .then(response => Buffer.from(response.data, 'binary').toString('base64'))
+  //     .catch(error => {
+  //       console.error('Error fetching image:', error);
+  //     });
+  // }
+
+  async function getImageData(url: string) {
+    try {
+      const response = await axios.post('/api/getImage', {
+        url: url
+      });
+      console.log('response', response.data)
+      console.log(response.data);
+      return response.data
+    } catch (error) {
+      console.error('Error fetching file:', error);
+    }
   }
 
   const generateImage = async () => {
@@ -98,10 +147,16 @@ const Gameplay = () => {
 
     if (response) {
       const data = await createImage('digital artwork for ' + response)
-      console.log(data)
+      console.log('data', data)
 
       if (data) {
-        setBase64Image(data);
+        const bufferData = await getImageData(data)
+        console.log(bufferData['base64'])
+        const uploadResponse = await lighthouse.uploadText('data:image/png;base64,' + bufferData['base64'], process.env.NEXT_PUBLIC_LIGHTHOUSE_KEY ?? ''); // path, apiKey
+
+        console.log(uploadResponse)
+        setImageIpfs(uploadResponse.data.Hash)
+        setBase64Image('data:image/png;base64,' + bufferData['base64']);
         (window as any).nft_modal.showModal()
       }
     }
@@ -163,6 +218,7 @@ const Gameplay = () => {
         </button>
       </div>
     </div>
+
     <dialog id="nft_modal" className="modal">
       <form method="dialog" className="modal-box flex flex-1 flex-col justify-center items-center">
         <h1 className="">{baseline.title}</h1>

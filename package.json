@@ -6,12 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "flowAccountsCreate": "flow accounts create"
   },
   "dependencies": {
+    "@lighthouse-web3/sdk": "^0.2.5",
     "@onflow/fcl": "^1.4.1",
+    "@types/elliptic": "^6.4.14",
     "axios": "^1.4.0",
+    "curve": "^0.1.1",
     "daisyui": "^3.2.1",
+    "elliptic": "^6.5.4",
     "fs": "^0.0.1-security",
     "midjourney": "^4.3.6",
     "net": "^1.0.2",
@@ -19,6 +24,7 @@
     "openai": "^3.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sha3": "^2.1.4",
     "styled-components": "^6.0.4",
     "use-hooks": "^2.0.0-rc.5",
     "zustand": "^4.3.9"
