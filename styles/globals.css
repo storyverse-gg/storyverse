@@ -7,6 +7,14 @@
   src: url('../public/PressStart2P-Regular.ttf');
 }
 
+/* Add the following custom CSS */
+.max-lines-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 html,
 body {
   padding: 0;
@@ -16,7 +24,7 @@ body {
 }
 
 .body {
-  min-height: 100vh;
+  min-height: 90vh;
   backdrop-filter: blur(5px);
 }
 

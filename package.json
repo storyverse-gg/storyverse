@@ -10,14 +10,18 @@
   },
   "dependencies": {
     "@onflow/fcl": "^1.4.1",
+    "axios": "^1.4.0",
     "daisyui": "^3.2.1",
-    "midjourney-client": "^1.0.8",
+    "fs": "^0.0.1-security",
+    "midjourney": "^4.3.6",
+    "net": "^1.0.2",
     "next": "13.4.9",
     "openai": "^3.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "^6.0.4",
-    "use-hooks": "^2.0.0-rc.5"
+    "use-hooks": "^2.0.0-rc.5",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "@types/node": "20.4.2",

@@ -43,15 +43,17 @@ export const startNewStory = async () => {
 
   console.log(chat_completion)
   const chat = chat_completion.data.choices[0]
-  return JSON.parse(chat.message?.content ?? '{}');
+
+  try {
+    const d = JSON.parse(chat.message?.content ?? '{}');
+    return d;
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 
 export const continueStory = async (messages: any) => {
-  console.log('req', [{
-    role: "system", content: `
-  Continue the following conversation, as your duty is to curate the story as the user take actions and make it more fun, exciting, surprising with few mysteries, riddles / puzzels and levels.
-`}, ...(messages as any)])
   const chat_completion = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [{
@@ -69,10 +71,6 @@ export const continueStory = async (messages: any) => {
 }
 
 export const createImagePrompt = async (messages: any) => {
-  console.log('req', [{
-    role: "system", content: `
-  Continue the following conversation, as your duty is to curate the story as the user take actions and make it more fun, exciting, surprising with few mysteries, riddles / puzzels and levels.
-`}, ...(messages as any)])
   const chat_completion = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [{
@@ -87,4 +85,14 @@ export const createImagePrompt = async (messages: any) => {
   console.log('c', chat_completion)
   const chat = chat_completion.data.choices[0]
   return chat.message?.content;
+}
+
+export const createImage = async (prompt: string) => {
+  const response = await openai.createImage({
+    prompt,
+    n: 1,
+    size: "1024x1024",
+  })
+
+  return response.data.data[0].url
 }
